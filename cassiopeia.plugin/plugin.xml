@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension point="org.eclipse.ui.views">
+      <view
+            name="Analysis Assistant"
+            icon="icons/sample.gif"
+            category="org.eclipse.jdt.ui.java"
+            class="cassiopeia.plugin.views.AnalysisView"
+            id="cassiopeia.plugin.views.analysisview">
+      </view>
+   </extension>
+   
+   <extension point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+   
+   <extension point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+      </perspectiveExtension>
+   </extension>
+
+</plugin>

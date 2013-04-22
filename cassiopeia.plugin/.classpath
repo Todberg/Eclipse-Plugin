@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins">
+		<accessrules>
+			<accessrule kind="accessible" pattern="org/eclipse/jdt/internal/ui/javaeditor/*"/>
+			<accessrule kind="accessible" pattern="yhello/TEST"/>
+		</accessrules>
+	</classpathentry>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="libs/jop-tools.jar" sourcepath="/Users/Todberg/Documents/jop/java/tools/src"/>
+	<classpathentry exported="true" kind="lib" path="libs/log4j-1.2.15.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/bcel-5.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jgrapht-jdk1.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/lpsolve55j.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/velocity-1.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/velocity-dep-1.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jop.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
