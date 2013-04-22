@@ -7,44 +7,31 @@ import java.net.URL;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
-import org.eclipse.jface.text.source.projection.IProjectionListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.part.ViewPart;
 import org.osgi.framework.Bundle;
 
-import com.jopdesign.common.AppInfo;
+import cassiopeia.plugin.Activator;
+import cassiopeia.plugin.listeners.PartListener;
+import cassiopeia.plugin.listeners.SelectionListenerJavaEditor;
+
 import com.jopdesign.common.AppSetup;
 import com.jopdesign.common.config.BooleanOption;
-import com.jopdesign.common.config.Config;
 import com.jopdesign.common.config.Option;
-import com.jopdesign.common.config.OptionGroup;
 import com.jopdesign.common.config.StringOption;
-import com.jopdesign.common.processormodel.JOPConfig;
-import com.jopdesign.common.processormodel.JOPModel;
-import com.jopdesign.common.processormodel.ProcessorModel;
 import com.jopdesign.dfa.DFATool;
-import com.jopdesign.timing.jop.MicrocodeAnalysis;
-import com.jopdesign.wcet.WCETProcessorModel;
 import com.jopdesign.wcet.WCETTool;
-
-import cassiopeia.plugin.Activator;
-import cassiopeia.plugin.listeners.SelectionListener;
-import cassiopeia.plugin.listeners.SelectionListenerJavaEditor;
 
 /**
  * This sample class demonstrates how to plug-in a new
@@ -68,6 +55,9 @@ public class AnalysisView extends ViewPart {
 
 	public static AnalysisView view;
 	
+	public JavaEditor javaEditor;
+	public IWorkbenchPage workbenchPage;
+	
 	public AnalysisView() {
 		registerSelectionListener();
 		view = this;
@@ -82,12 +72,6 @@ public class AnalysisView extends ViewPart {
 	@Override
 	public void setFocus() {
 		
-	}
-	
-	@Override
-	public void dispose() {
-		getSite().getWorkbenchWindow().getSelectionService().removePostSelectionListener(SelectionListener.getListener());
-		super.dispose();
 	}
 	
 	public void updateViewCallback(IJavaElement element) {
@@ -212,95 +196,6 @@ public class AnalysisView extends ViewPart {
         }
 	}
 	
-	private void wcaTool() {
-		/*
-		IJavaProject javaProject = element.getJavaProject();
-		IProject project = (IProject)((IAdaptable)javaProject).getAdapter(IProject.class);
-		
-		IPath projectPath = project.getLocation();
-
-		StringBuilder cp = null;
-		StringBuilder sp = null;
-		try {
-			String pluginPath = new File(".").getCanonicalPath();
-			
-			// Classpath
-			cp = new StringBuilder();
-			cp.append(projectPath + "/bin:");
-	
-			Bundle bundle = Platform.getBundle(Activator.PLUGIN_ID);
-			URL jopJar = bundle.getEntry("libs/jop.jar");
-			URL jopJarFile = org.eclipse.core.runtime.FileLocator.toFileURL(jopJar);
-			cp.append(jopJarFile);
-			
-			org.eclipse.core.runtime.FileLocator.toFileURL(bundle.getEntry("common"));
-			
-			// Sourcepath
-			sp = new StringBuilder();
-			
-			//sp.append(pluginPath + "/common:");
-			//sp.append(pluginPath + "/jdk_base:");
-			//sp.append(pluginPath + "/jdk11:");
-			//sp.append(pluginPath + "/rtapi:");
-			//sp.append(pluginPath + "/test:");
-			//sp.append(pluginPath + "/bench:");
-			//sp.append(pluginPath + "/app");
-			
-			sp.append(org.eclipse.core.runtime.FileLocator.toFileURL(bundle.getEntry("common")) + ":");
-			sp.append(org.eclipse.core.runtime.FileLocator.toFileURL(bundle.getEntry("jdk_base")) + ":");
-			sp.append(org.eclipse.core.runtime.FileLocator.toFileURL(bundle.getEntry("jdk11")) + ":");
-			sp.append(org.eclipse.core.runtime.FileLocator.toFileURL(bundle.getEntry("rtapi")) + ":");
-			sp.append(org.eclipse.core.runtime.FileLocator.toFileURL(bundle.getEntry("test")) + ":");
-			sp.append(org.eclipse.core.runtime.FileLocator.toFileURL(bundle.getEntry("bench")) + ":");
-			sp.append(org.eclipse.core.runtime.FileLocator.toFileURL(bundle.getEntry("app")) + ":");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		String[] args = new String[] {
-			"--classpath",
-			cp.toString(),
-			"--sp",
-			sp.toString(),
-			"--target-method",
-			"main",
-			"-o",
-			"/Users/Todberg/Desktop/out",
-			"--use-dfa",
-			"yes",
-			"--uppaal",
-			"no",
-			"--uppaal-verifier",
-			"verifyta",
-			"--callstring-length",
-			"0",
-			"Program"
-		};
-		
-		for(String arg : args) {
-			System.out.println("arg: " + arg);
-		}
-
-		Properties defaultProperties = new Properties();
-		defaultProperties.put("outdir", "/Users/Todberg/Desktop/out");
-		AppSetup setup = new AppSetup(defaultProperties, false);
-		setup.setVersionInfo("1.0.1");
-		setup.setUsageInfo("WCETAnalysis", "WCET Analysis tool");
-		
-        WCETTool wcetTool = new WCETTool();
-        DFATool dfaTool = new DFATool();
-
-        setup.registerTool("dfa", dfaTool, true, false);
-        setup.registerTool("wcet", wcetTool);
-        setup.addSourceLineOptions(false);
-        setup.initAndLoad(args, true, false, false);
-
-        if (setup.useTool("dfa")) {
-           wcetTool.setDfaTool(dfaTool);
-        }
-        */
-	}
-	
 	private void registerSelectionListener() {
 		new Thread(new Runnable() {
 			@Override
@@ -315,16 +210,25 @@ public class AnalysisView extends ViewPart {
 					site = getSite();
 				}
 				IWorkbenchWindow window = site.getWorkbenchWindow();
-
-				IEditorPart editorPart = window.getActivePage().getActiveEditor();
-				JavaEditor javaEditor = (JavaEditor)editorPart;
+				workbenchPage = window.getActivePage();
+				workbenchPage.addPartListener(PartListener.getListener());
+				
+				IEditorPart editorPart = workbenchPage.getActiveEditor();	
+				javaEditor = (JavaEditor)editorPart;
 				IEditorSite editorSite = javaEditor.getEditorSite();
 				
 				if(editorSite != null) {
 					editorSite.getSelectionProvider().addSelectionChangedListener(SelectionListenerJavaEditor.getListener());
 				}
-				//window.getSelectionService().addPostSelectionListener(SelectionListener.getListener());
 			}
 		}).start();
+	}
+	
+	@Override
+	public void dispose() {
+		javaEditor.getEditorSite().getSelectionProvider().removeSelectionChangedListener(
+				SelectionListenerJavaEditor.getListener());
+		workbenchPage.removePartListener(PartListener.getListener());
+		super.dispose();
 	}
 }
