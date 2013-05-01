@@ -23,5 +23,24 @@
             targetID="org.eclipse.jdt.ui.JavaPerspective">
       </perspectiveExtension>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="cassiopeia.plugin.category.wizards"
+            name="SCJ Development">
+      </category>
+      <wizard
+            category="cassiopeia.plugin.category.wizards"
+            class="cassiopeia.plugin.wizards.SCJProjectNewWizard"
+            id="cassiopeia.plugin.wizards.SCJProjectNewWizard"
+            name="Project">
+      </wizard>
+      <wizard
+            category="cassiopeia.plugin.category.wizards"
+            class="cassiopeia.plugin.wizards.SCJSafeletNewWizard"
+            id="cassiopeia.plugin.wizards.SCJSafeletNewWizard"
+            name="Safelet">
+      </wizard>
+   </extension>
 
 </plugin>
