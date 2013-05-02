@@ -4,17 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jface.dialogs.IDialogPage;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -28,38 +22,24 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.swt.widgets.Group;
 
-public class SCJSafeletNewWizardPage extends WizardPage {
-
-	private ISelection selection;
+public class NewWizardSharedPage extends WizardPage {
 	
 	private Text txtSourceFolder;
-	private Text txtName;
 	private Text txtPackage;
+	private Text txtName;
+
 	private Button btnBrowsePackage;
 	private Button btnBrowseSourceFolder;
+	
 	private Label lblDefault;
-	private Button btnRadioLevel0;
-	private Button btnRadioLevel1;
-	private Button btnRadioLevel2;
 
 	
-	/**
-	 * Constructor for SampleNewWizardPage.
-	 * 
-	 * @param pageName
-	 */
-	public SCJSafeletNewWizardPage(ISelection selection) {
-		super("wizardPage");
-		setTitle("Safelet Class");
-		setDescription("Create a new implementation of the Safelet class");
-		this.selection = selection;
+	public NewWizardSharedPage() {
+		super("shared");
 	}
 
-	/**
-	 * @see IDialogPage#createControl(Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		
@@ -124,55 +104,8 @@ public class SCJSafeletNewWizardPage extends WizardPage {
 		Label lblPackage = new Label(composite, SWT.NONE);
 		lblPackage.setBounds(10, 50, 59, 14);
 		lblPackage.setText("Package:");
-		
-		Group grpComplianceLevel = new Group(composite, SWT.NONE);
-		grpComplianceLevel.setText("Compliance level:");
-		grpComplianceLevel.setBounds(10, 143, 207, 147);
-		
-		btnRadioLevel0 = new Button(grpComplianceLevel, SWT.RADIO);
-		btnRadioLevel0.setBounds(30, 23, 91, 18);
-		btnRadioLevel0.setText("Level 0");
-		
-		btnRadioLevel1 = new Button(grpComplianceLevel, SWT.RADIO);
-		btnRadioLevel1.setBounds(30, 57, 91, 18);
-		btnRadioLevel1.setText("Level 1");
-		btnRadioLevel1.setSelection(true);
-		
-		btnRadioLevel2 = new Button(grpComplianceLevel, SWT.RADIO);
-		btnRadioLevel2.setBounds(30, 92, 91, 18);
-		btnRadioLevel2.setText("Level 2");
-		
-		initialize();
-		dialogChanged();
-		setControl(composite);
 	}
-
-	/**
-	 * Tests if the current workbench selection is a suitable container to use.
-	 */
-	private void initialize() {
-		if (selection != null && selection.isEmpty() == false
-				&& selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
-			if (ssel.size() > 1)
-				return;
-			Object element = ssel.getFirstElement();
-			
-			IProject project = null;
-			if (element instanceof IResource) {
-		        project = ((IResource)element).getProject();
-			} else if (element instanceof IJavaElement) {
-				IJavaProject javaProject= ((IJavaElement)element).getJavaProject();
-		        project = javaProject.getProject(); 
-			}
-			
-			if(project != null) {
-				txtSourceFolder.setText(project.getName().toString() + "/src");
-			}
-		}
-		txtName.setText("MySafelet.java");
-	}
-
+	
 	/**
 	 * Uses the standard container selection dialog to choose the new value for
 	 * the container field.
@@ -225,10 +158,7 @@ public class SCJSafeletNewWizardPage extends WizardPage {
 			}
 		}
 	}
-
-	/**
-	 * Ensures that both text fields are set.
-	 */
+	
 	private void dialogChanged() {	
 		if(!validateSourceFolder())
 			return;
@@ -314,32 +244,7 @@ public class SCJSafeletNewWizardPage extends WizardPage {
 		setErrorMessage(message);
 		setPageComplete(message == null);
 	}
-
-	public String getSourceFolderName() {
-		return txtSourceFolder.getText();
-	}
 	
-	public String getPackageName() {
-		return txtPackage.getText();
-	}
-	
-	public String getFileName() {
-		return txtName.getText();
-	}
-	
-	public int getComplianceLevel() {
-		int level;
-		
-		if(btnRadioLevel0.getSelection())
-			level = 0;
-		else if(btnRadioLevel1.getSelection())
-			level = 1;
-		else
-			level = 2;
-		
-		return level;
-	}
-
 	public String getDestination() {
 		return getSourceFolderName() + "/" + getPackageName();
 	}
@@ -359,5 +264,17 @@ public class SCJSafeletNewWizardPage extends WizardPage {
 			fileName = fileName.substring(0, dotIndex);
 		}
 		return fileName;
+	}
+	
+	public String getSourceFolderName() {
+		return txtSourceFolder.getText();
+	}
+	
+	public String getPackageName() {
+		return txtPackage.getText();
+	}
+	
+	public String getFileName() {
+		return txtName.getText();
 	}
 }

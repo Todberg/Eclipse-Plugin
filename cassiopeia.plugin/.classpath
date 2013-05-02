@@ -16,5 +16,6 @@
 	<classpathentry exported="true" kind="lib" path="libs/velocity-1.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/velocity-dep-1.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/jop.jar"/>
+	<classpathentry kind="lib" path="swt-grouplayout.jar" sourcepath="swt-grouplayout.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

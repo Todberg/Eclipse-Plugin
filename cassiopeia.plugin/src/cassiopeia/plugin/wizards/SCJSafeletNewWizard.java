@@ -12,10 +12,13 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import java.io.*;
+
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 
 import cassiopeia.plugin.wizards.pages.SCJSafeletNewWizardPage;
+import cassiopeia.plugin.wizards.templates.SafeletTemplate;
+import cassiopeia.plugin.wizards.templates.models.SafeletModel;
 
 /**
  * This is a sample new wizard. Its role is to create a new file 
@@ -32,6 +35,9 @@ public class SCJSafeletNewWizard extends Wizard implements INewWizard {
 	
 	private SCJSafeletNewWizardPage page;
 	private ISelection selection;
+	
+	private String name;
+	private int complianceLevel;
 
 	/**
 	 * Constructor for SCJSafeletNewWizard.
@@ -58,6 +64,8 @@ public class SCJSafeletNewWizard extends Wizard implements INewWizard {
 	public boolean performFinish() {
 		final String containerName = page.getDestination();
 		final String fileName = page.getFileNameWithExtension();
+		name = page.getFileNameWithoutExtension();
+		complianceLevel = page.getComplianceLevel();
 		
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
@@ -127,11 +135,35 @@ public class SCJSafeletNewWizard extends Wizard implements INewWizard {
 		monitor.worked(1);
 	}
 	
-	/**
-	 * We will initialize file contents with a sample text.
+	/*
+	 * Generates a Safelet implementation (Java file) from the SafeletTemplate 
+	 * in the "cassiopeia.plugin.wizards.templates" package
 	 */
 	private InputStream openContentStream() {
-		return this.getClass().getResourceAsStream("templates/safelet-template.resource");
+		SafeletTemplate safelet = new SafeletTemplate();
+		SafeletModel model = new SafeletModel();
+		
+		model.name = name;
+		switch(complianceLevel) {
+			case 0:
+				model.safeletTypeParameter = "CyclicExecutive";
+				break;
+			case 1:
+			case 2:
+				model.safeletTypeParameter = "Mission";
+				break;
+		}
+		
+		String result = safelet.generate(model);
+		
+		InputStream stream = null;
+		try {
+			stream = new ByteArrayInputStream(result.getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			System.err.println("Could not create InputStream from template string representation. " + e.getStackTrace());
+		}
+		
+		return stream;
 	}
 
 	private void throwCoreException(String message) throws CoreException {

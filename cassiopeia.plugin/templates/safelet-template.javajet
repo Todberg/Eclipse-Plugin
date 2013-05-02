@@ -1,0 +1,26 @@
+<%@ jet package="cassiopeia.plugin.wizards.templates" imports="cassiopeia.plugin.wizards.templates.models.*" class="SafeletTemplate" %>
+<% SafeletModel model = (SafeletModel) argument; %>
+public class <%=model.name%> implements Safelet<<%=model.safeletTypeParameter%>> {
+
+	@Override
+	@SCJAllowed(Level.SUPPORT)
+	@SCJRestricted(phase = Phase.INITIALIZATION)
+	public void initializeApplication() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	@SCJAllowed(Level.SUPPORT)
+	@SCJRestricted(phase = Phase.INITIALIZATION)
+	public MissionSequencer<<%=model.safeletTypeParameter%>> getSequencer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	@SCJAllowed(Level.SUPPORT)
+	public long immortalMemorySize() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+}

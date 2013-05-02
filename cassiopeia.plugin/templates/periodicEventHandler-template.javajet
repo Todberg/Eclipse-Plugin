@@ -1,0 +1,20 @@
+<%@ jet package="cassiopeia.plugin.wizards.templates" imports="cassiopeia.plugin.wizards.templates.models.*" class="PeriodicEventHandlerTemplate" %>
+<% EventHandlerModel model = (EventHandlerModel) argument; %>
+public class <%=model.name%> extends PeriodicEventHandler  {
+
+	public <%=model.name%>(PriorityParameters priority, PeriodicParameters release, StorageParameters storage, long scopeSize, String name) {
+		super(priority, release, storage, scopeSize, name);
+		// TODO Auto-generated constructor stub
+	}
+	
+	public <%=model.name%>(PriorityParameters priority, PeriodicParameters release, StorageParameters storage, long scopeSize) {
+		super(priority, release, storage, scopeSize);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	@SCJAllowed(Level.SUPPORT)
+	public void handleAsyncEvent() {
+		// TODO Auto-generated method stub	
+	}
+}
