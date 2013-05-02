@@ -21,7 +21,7 @@ public class SCJMissionWizard extends SharedWizard implements ISharedWizard {
 	}
 
 	public boolean performFinish() {
-		final String containerName = page.getSourceFolderName();
+		final String containerName = page.getDestination();
 		final String fileName = page.getFileNameWithExtension();
 		super.packageName = page.getPackageName();
 		super.name = page.getFileNameWithoutExtension();

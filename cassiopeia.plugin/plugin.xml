@@ -31,12 +31,6 @@
       </category>
       <wizard
             category="cassiopeia.plugin.category.wizards"
-            class="cassiopeia.plugin.wizards.SCJProjectWizard"
-            id="cassiopeia.plugin.wizards.SCJProjectNewWizard"
-            name="Project">
-      </wizard>
-      <wizard
-            category="cassiopeia.plugin.category.wizards"
             class="cassiopeia.plugin.wizards.SCJSafeletWizard"
             id="cassiopeia.plugin.wizards.SCJSafeletNewWizard"
             name="Safelet">
