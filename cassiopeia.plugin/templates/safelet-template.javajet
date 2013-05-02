@@ -1,5 +1,7 @@
 <%@ jet package="cassiopeia.plugin.wizards.templates" imports="cassiopeia.plugin.wizards.templates.models.*" class="SafeletTemplate" %>
 <% SafeletModel model = (SafeletModel) argument; %>
+<%=model.packageDeclaration%>
+
 public class <%=model.name%> implements Safelet<<%=model.safeletTypeParameter%>> {
 
 	@Override

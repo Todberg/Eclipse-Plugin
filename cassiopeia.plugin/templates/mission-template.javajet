@@ -1,0 +1,19 @@
+<%@ jet package="cassiopeia.plugin.wizards.templates" imports="cassiopeia.plugin.wizards.templates.models.*" class="MissionTemplate" %>
+<% MissionModel model = (MissionModel) argument; %>
+<%=model.packageDeclaration%>
+
+public class <%=model.name%> extends Mission {
+
+	@Override
+	@SCJAllowed(Level.SUPPORT)
+	protected void initialize() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	@SCJAllowed
+	public long missionMemorySize() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+}

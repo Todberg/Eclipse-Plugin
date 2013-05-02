@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -17,31 +22,41 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-public class NewWizardSharedPage extends WizardPage {
+public class SharedWizardPage extends WizardPage {
 	
-	private Text txtSourceFolder;
-	private Text txtPackage;
-	private Text txtName;
+	/* SWT text widgets */
+	protected Text txtSourceFolder;
+	protected Text txtPackage;
+	protected Text txtName;
 
-	private Button btnBrowsePackage;
-	private Button btnBrowseSourceFolder;
+	/* SWT button widgets */
+	protected Button btnBrowsePackage;
+	protected Button btnBrowseSourceFolder;
 	
-	private Label lblDefault;
+	/* SWT label widgets */
+	protected Label lblDefault;
+	
+	protected ISelection selection;
 
-	
-	public NewWizardSharedPage() {
-		super("shared");
+	public SharedWizardPage(String pageName, ISelection selection) {
+		super(pageName);
+		
+		this.selection = selection;
 	}
-
+	
 	@Override
-	public void createControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NULL);
+	public void createControl(Composite composite) {
+		Group grpSCJParams = new Group(composite, SWT.BORDER);
+		grpSCJParams.setText("Safety-Critical Java Parameters");
+		grpSCJParams.setBounds(10, 143, 570, 147);
 		
 		Label lblSourceFolder = new Label(composite, SWT.NONE);
 		lblSourceFolder.setBounds(10, 17, 79, 14);
@@ -106,10 +121,28 @@ public class NewWizardSharedPage extends WizardPage {
 		lblPackage.setText("Package:");
 	}
 	
-	/**
-	 * Uses the standard container selection dialog to choose the new value for
-	 * the container field.
-	 */
+	protected void initialize() {
+		if (selection != null && selection.isEmpty() == false
+				&& selection instanceof IStructuredSelection) {
+			IStructuredSelection ssel = (IStructuredSelection) selection;
+			if (ssel.size() > 1)
+				return;
+			Object element = ssel.getFirstElement();
+			
+			IProject project = null;
+			if (element instanceof IResource) {
+		        project = ((IResource)element).getProject();
+			} else if (element instanceof IJavaElement) {
+				IJavaProject javaProject= ((IJavaElement)element).getJavaProject();
+		        project = javaProject.getProject(); 
+			}
+			
+			if(project != null) {
+				txtSourceFolder.setText(project.getName().toString() + "/src");
+			}
+		}
+	}
+	
 	private void handleBrowseSourceFolder() {
 		ContainerSelectionDialog dialog = new ContainerSelectionDialog(
 				getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
@@ -159,7 +192,7 @@ public class NewWizardSharedPage extends WizardPage {
 		}
 	}
 	
-	private void dialogChanged() {	
+	protected void dialogChanged() {	
 		if(!validateSourceFolder())
 			return;
 		if(!validatePackage())

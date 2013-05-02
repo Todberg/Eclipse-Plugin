@@ -6,11 +6,11 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
-public class SCJProjectNewWizard extends Wizard implements INewWizard {
+public class SCJProjectWizard extends Wizard implements INewWizard {
 
 	private WizardNewProjectCreationPage pageOne;
 	
-	public SCJProjectNewWizard() {
+	public SCJProjectWizard() {
 		setWindowTitle("New SCJ Project");
 	}
 	
