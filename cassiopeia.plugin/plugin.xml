@@ -47,6 +47,22 @@
             id="cassiopeia.plugin.wizards.SCJMissionWizard"
             name="Mission">
       </wizard>
+      <wizard
+            category="cassiopeia.plugin.category.wizards"
+            class="cassiopeia.plugin.wizards.SCJProjectWizard"
+            id="cassiopeia.plugin.wizards.SCJProjectWizard"
+            name="Project"
+            project="true">
+      </wizard>
+   </extension>
+   <extension
+         id="cassiopeia.plugin.projectNature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="cassiopeia.plugin.natures.ProjectNature">
+         </run>
+      </runtime>
    </extension>
 
 </plugin>

@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -55,8 +54,8 @@ public class SharedWizardPage extends WizardPage {
 	@Override
 	public void createControl(Composite composite) {
 		Group grpSCJParams = new Group(composite, SWT.BORDER);
-		grpSCJParams.setText("Safety-Critical Java Parameters");
-		grpSCJParams.setBounds(10, 143, 570, 147);
+		grpSCJParams.setText("Safety-Critical Java Specific");
+		grpSCJParams.setBounds(10, 143, 570, 155);
 		
 		Label lblSourceFolder = new Label(composite, SWT.NONE);
 		lblSourceFolder.setBounds(10, 17, 79, 14);
