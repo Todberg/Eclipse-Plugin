@@ -23,4 +23,5 @@ Bundle-ClassPath: .,
  libs/lpsolve55j.jar,
  libs/velocity-1.5.jar,
  libs/velocity-dep-1.5.jar,
- libs/jop.jar
+ libs/jop.jar,
+ swt-grouplayout.jar

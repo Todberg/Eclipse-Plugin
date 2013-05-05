@@ -2,6 +2,8 @@ package cassiopeia.plugin.wizards.pages;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -26,13 +28,19 @@ public class SCJEventHandlerWizardPage extends SharedWizardPage {
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		super.createControl(composite);
+
+		GridLayout gridLayout = new GridLayout(2, false);
+		grpSCJSpecific.setLayout(gridLayout);
 		
-		Label lblHandlerType = new Label(composite, SWT.NONE);
-		lblHandlerType.setBounds(24, 180, 79, 14);
+		Label lblHandlerType = new Label(grpSCJSpecific, SWT.NONE);
+		GridData gridData = new GridData();
+		lblHandlerType.setLayoutData(gridData);
 		lblHandlerType.setText("Handler type:");
-		
-		combo = new Combo(composite, SWT.READ_ONLY);
-		combo.setBounds(109, 176, 385, 22);
+
+		combo = new Combo(grpSCJSpecific, SWT.READ_ONLY);
+		gridData = new GridData();
+		gridData.horizontalAlignment = SWT.LEFT;
+		combo.setLayoutData(gridData);
 		combo.setItems(new String[] { 
 				EventHandlerType.Periodic.toString(), 
 				EventHandlerType.Aperiodic.toString() 

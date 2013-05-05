@@ -20,6 +20,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -44,6 +46,9 @@ public class SharedWizardPage extends WizardPage {
 	protected Label lblDefault;
 	
 	protected ISelection selection;
+	
+	/* SWT group widgets */
+	protected Group grpSCJSpecific;
 
 	public SharedWizardPage(String pageName, ISelection selection) {
 		super(pageName);
@@ -52,17 +57,20 @@ public class SharedWizardPage extends WizardPage {
 	}
 	
 	@Override
-	public void createControl(Composite composite) {
-		Group grpSCJParams = new Group(composite, SWT.BORDER);
-		grpSCJParams.setText("Safety-Critical Java Specific");
-		grpSCJParams.setBounds(10, 143, 570, 155);
+	public void createControl(Composite composite) {	
+		composite.setLayout(new GridLayout(4, false));
 		
 		Label lblSourceFolder = new Label(composite, SWT.NONE);
-		lblSourceFolder.setBounds(10, 17, 79, 14);
+		GridData gridData = new GridData();
+		lblSourceFolder.setLayoutData(gridData);
 		lblSourceFolder.setText("Source folder:");
 		
 		txtSourceFolder = new Text(composite, SWT.BORDER);
-		txtSourceFolder.setBounds(95, 14, 391, 19);
+		gridData = new GridData();
+		gridData.horizontalAlignment = SWT.FILL;
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.horizontalSpan = 2;
+		txtSourceFolder.setLayoutData(gridData);
 		txtSourceFolder.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				dialogChanged();
@@ -70,38 +78,43 @@ public class SharedWizardPage extends WizardPage {
 		});
 		
 		btnBrowseSourceFolder = new Button(composite, SWT.NONE);
-		btnBrowseSourceFolder.setBounds(492, 10, 94, 28);
 		btnBrowseSourceFolder.setText("Browse...");
+		gridData = new GridData();
+		gridData.horizontalAlignment = SWT.FILL;
+		btnBrowseSourceFolder.setLayoutData(gridData);
 		btnBrowseSourceFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleBrowseSourceFolder();
 			}
 		});
 		
-		Label label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
-		label.setBounds(10, 80, 570, 2);
-		
-		Label lblName = new Label(composite, SWT.NONE);
-		lblName.setBounds(10, 105, 59, 14);
-		lblName.setText("Name:");
-		
-		txtName = new Text(composite, SWT.BORDER);
-		txtName.setBounds(95, 102, 391, 19);
-		txtName.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				dialogChanged();
-			}
-		});
+		Label lblPackage = new Label(composite, SWT.NONE);
+		gridData = new GridData();
+		lblPackage.setLayoutData(gridData);
+		lblPackage.setBounds(10, 50, 59, 14);
+		lblPackage.setText("Package:");
 		
 		txtPackage = new Text(composite, SWT.BORDER);
-		txtPackage.setBounds(95, 50, 336, 19);
+		gridData = new GridData();
+		gridData.horizontalAlignment = SWT.FILL;
+		gridData.grabExcessHorizontalSpace = true;
+		txtPackage.setLayoutData(gridData);
 		txtPackage.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				dialogChanged();
 			}
 		});
 		
+		lblDefault = new Label(composite, SWT.NONE);
+		gridData = new GridData();
+		gridData.horizontalAlignment = SWT.CENTER;
+		lblDefault.setLayoutData(gridData);
+		lblDefault.setText("(default)");
+		
 		btnBrowsePackage = new Button(composite, SWT.NONE);
+		gridData = new GridData();
+		gridData.horizontalAlignment = SWT.FILL;
+		btnBrowsePackage.setLayoutData(gridData);
 		btnBrowsePackage.setEnabled(false);
 		btnBrowsePackage.setBounds(492, 46, 94, 28);
 		btnBrowsePackage.setText("Browse...");
@@ -110,14 +123,48 @@ public class SharedWizardPage extends WizardPage {
 				handleBrowsePackage();
 			}
 		});
+
+		Label label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		gridData = new GridData();
+		gridData.horizontalAlignment = SWT.FILL;
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.horizontalSpan = 4;
+		label.setLayoutData(gridData);
+		label.setBounds(10, 80, 570, 2);
 		
-		lblDefault = new Label(composite, SWT.NONE);
-		lblDefault.setBounds(437, 53, 49, 14);
-		lblDefault.setText("(default)");
+		Label lblName = new Label(composite, SWT.NONE);
+		gridData = new GridData();
+		lblName.setLayoutData(gridData);
+		lblName.setBounds(10, 105, 59, 14);
+		lblName.setText("Name:");
+			
+		txtName = new Text(composite, SWT.BORDER);
+		gridData = new GridData();
+		gridData.horizontalAlignment = SWT.FILL;
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.horizontalSpan = 2;
+		txtName.setLayoutData(gridData);
+		txtName.setBounds(95, 102, 391, 19);
+		txtName.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				dialogChanged();
+			}
+		});
 		
-		Label lblPackage = new Label(composite, SWT.NONE);
-		lblPackage.setBounds(10, 50, 59, 14);
-		lblPackage.setText("Package:");
+		gridData = new GridData();
+		new Label(composite, SWT.NULL).setLayoutData(gridData);
+		gridData = new GridData();
+		new Label(composite, SWT.NULL).setLayoutData(gridData);
+		
+		grpSCJSpecific = new Group(composite, SWT.BORDER);
+		gridData = new GridData();
+		gridData.horizontalAlignment = SWT.FILL;
+		gridData.verticalAlignment = SWT.FILL;
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.grabExcessVerticalSpace = true;
+		gridData.horizontalSpan = 4;
+		grpSCJSpecific.setLayoutData(gridData);
+		grpSCJSpecific.setText("Safety-Critical Java Specific");
 	}
 	
 	protected void initialize() {

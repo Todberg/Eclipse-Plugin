@@ -2,6 +2,8 @@ package cassiopeia.plugin.wizards.pages;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -25,21 +27,28 @@ public class SCJSafeletWizardPage extends SharedWizardPage {
 		Composite composite = new Composite(parent, SWT.NULL);
 		super.createControl(composite);
 		
-		lblComplianceLevel = new Label(composite, SWT.NONE);
-		lblComplianceLevel.setBounds(24, 180, 98, 14);
+		GridLayout gridLayout = new GridLayout(4, false);
+		grpSCJSpecific.setLayout(gridLayout);
+		
+		lblComplianceLevel = new Label(grpSCJSpecific, SWT.NONE);
+		GridData gridData = new GridData();
+		lblComplianceLevel.setLayoutData(gridData);
 		lblComplianceLevel.setText("Compliance level:");
 		
-		btnRadioLevel0 = new Button(composite, SWT.RADIO);
-		btnRadioLevel0.setBounds(128, 177, 60, 18);
+		btnRadioLevel0 = new Button(grpSCJSpecific, SWT.RADIO);
+		gridData = new GridData();
+		btnRadioLevel0.setLayoutData(gridData);
 		btnRadioLevel0.setText("Level 0");
 			
-		btnRadioLevel1 = new Button(composite, SWT.RADIO);
-		btnRadioLevel1.setBounds(194, 177, 60, 18);
+		btnRadioLevel1 = new Button(grpSCJSpecific, SWT.RADIO);
+		gridData = new GridData();
+		btnRadioLevel1.setLayoutData(gridData);
 		btnRadioLevel1.setText("Level 1");
 		btnRadioLevel1.setSelection(true);
 		
-		btnRadioLevel2 = new Button(composite, SWT.RADIO);
-		btnRadioLevel2.setBounds(260, 177, 60, 18);
+		btnRadioLevel2 = new Button(grpSCJSpecific, SWT.RADIO);
+		gridData = new GridData();
+		btnRadioLevel2.setLayoutData(gridData);
 		btnRadioLevel2.setText("Level 2");
 			
 		initializePage();
