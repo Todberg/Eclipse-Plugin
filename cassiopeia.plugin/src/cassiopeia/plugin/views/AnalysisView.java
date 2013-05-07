@@ -1,6 +1,5 @@
 package cassiopeia.plugin.views;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -56,6 +55,7 @@ public class AnalysisView extends ViewPart {
 	}
 	
 	public void updateViewCallback(IJavaElement element) {
+		/*
 		setContentDescription("IJavaElement: " + element.toString() + " Name: " + element.getElementName());
 		
 		IJavaProject javaProject = element.getJavaProject();
@@ -175,6 +175,7 @@ public class AnalysisView extends ViewPart {
         if (setup.useTool("dfa")) {
            wcetTool.setDfaTool(dfaTool);
         }
+        */
 	}
 	
 	private void registerSelectionListener() {

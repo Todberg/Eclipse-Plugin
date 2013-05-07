@@ -2,6 +2,7 @@ package cassiopeia.plugin.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -21,6 +22,8 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 import cassiopeia.plugin.natures.SCJProjectSupport;
 import cassiopeia.plugin.wizards.pages.SCJProjectWizardPage;
+import cassiopeia.plugin.wizards.pages.tree.Model.LibraryCategory;
+import cassiopeia.plugin.wizards.pages.tree.Model.SourceFolder;
 
 public class SCJProjectWizard extends Wizard implements INewWizard, IExecutableExtension {
 
@@ -49,7 +52,9 @@ public class SCJProjectWizard extends Wizard implements INewWizard, IExecutableE
 	@Override
 	public boolean performFinish() {	
 		final IProject project = page.getProjectHandle();
-
+		final LibraryCategory libraryCategory = page.getLibraryCategory();
+		final List<SourceFolder> folders = page.getSourceFolders();
+		
 		URI projectLocation = (!page.useDefaults() ? page.getLocationURI() : null);
 		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -58,8 +63,8 @@ public class SCJProjectWizard extends Wizard implements INewWizard, IExecutableE
 		
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
             protected void execute(IProgressMonitor monitor) throws CoreException {
-            	SCJProjectSupport support = new SCJProjectSupport();
-                support.createJavaProject(project, description, monitor);
+            	SCJProjectSupport support = new SCJProjectSupport(project, description, monitor);
+                support.createJavaProject(folders);
             }
         };
         try {
