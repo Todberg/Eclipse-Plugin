@@ -45,11 +45,11 @@ public class SharedWizardPage extends WizardPage {
 	/* SWT label widgets */
 	protected Label lblDefault;
 	
-	protected ISelection selection;
-	
 	/* SWT group widgets */
 	protected Group grpSCJSpecific;
 
+	protected ISelection selection;
+	
 	public SharedWizardPage(String pageName, ISelection selection) {
 		super(pageName);
 		

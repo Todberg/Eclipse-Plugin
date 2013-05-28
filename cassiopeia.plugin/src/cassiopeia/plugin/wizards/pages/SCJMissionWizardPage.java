@@ -6,8 +6,6 @@ import org.eclipse.swt.widgets.Composite;
 
 public class SCJMissionWizardPage extends SharedWizardPage {
 	
-	/* SWT ? widgets */
-
 	public SCJMissionWizardPage(ISelection selection) {
 		super("EventHandlerNewWizardPage", selection);
 		

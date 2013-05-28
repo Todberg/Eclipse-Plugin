@@ -58,18 +58,6 @@ public class SCJEventHandlerWizardPage extends SharedWizardPage {
 	}
 	
 	public EventHandlerType getEventHandlerType() {
-		EventHandlerType type = null;
-		
-		int selectionIndex = combo.getSelectionIndex();
-		switch(selectionIndex) {
-			case 0:
-				type = EventHandlerType.Periodic;
-				break;
-			case 1:
-				type = EventHandlerType.Aperiodic;
-				break;
-		}
-		
-		return type;
+		return (combo.getSelectionIndex() == 0 ? EventHandlerType.Periodic : EventHandlerType.Aperiodic);
 	}
 }

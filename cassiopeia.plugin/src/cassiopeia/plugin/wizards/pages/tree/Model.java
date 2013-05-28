@@ -5,8 +5,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 public class Model {
@@ -90,15 +91,18 @@ public class Model {
 	
 	public class Jar extends TreeItem {
 		public Jar() {
-			Image image = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
-			super.setImage(image);
+			ISharedImages images = JavaUI.getSharedImages();
+			Image img = images.getImage(ISharedImages.IMG_OBJS_JAR);
+			super.setImage(img);
 		}
 	}
 	
 	public class SourceFolder extends TreeItem {
 		public SourceFolder() {
-			Image image = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
-			super.setImage(image);
+			//ISharedImages images = JavaUI.getSharedImages();
+			org.eclipse.ui.ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
+			Image img = images.getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_FOLDER);
+			super.setImage(img);
 		}
 	}
 

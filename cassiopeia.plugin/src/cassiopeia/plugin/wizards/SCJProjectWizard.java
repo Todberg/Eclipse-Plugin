@@ -20,6 +20,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
+import cassiopeia.plugin.misc.SafeletData;
 import cassiopeia.plugin.natures.SCJProjectSupport;
 import cassiopeia.plugin.wizards.pages.SCJProjectWizardPage;
 import cassiopeia.plugin.wizards.pages.tree.Model.LibraryCategory;
@@ -54,6 +55,7 @@ public class SCJProjectWizard extends Wizard implements INewWizard, IExecutableE
 		final IProject project = page.getProjectHandle();
 		final LibraryCategory libraryCategory = page.getLibraryCategory();
 		final List<SourceFolder> folders = page.getSourceFolders();
+		final SafeletData safeletData = page.getSafeletData();
 		
 		URI projectLocation = (!page.useDefaults() ? page.getLocationURI() : null);
 		
@@ -63,12 +65,12 @@ public class SCJProjectWizard extends Wizard implements INewWizard, IExecutableE
 		
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
             protected void execute(IProgressMonitor monitor) throws CoreException {
-            	SCJProjectSupport support = new SCJProjectSupport(project, description, monitor);
-                support.createJavaProject(folders);
+            	SCJProjectSupport support = new SCJProjectSupport(getShell(), project, description, monitor);
+                support.createJavaProject(safeletData, folders);
             }
         };
         try {
-            getContainer().run(true, true, op);
+            getContainer().run(true, false, op);
         } catch (InterruptedException e) {
             return false;
         } catch (InvocationTargetException e) {
