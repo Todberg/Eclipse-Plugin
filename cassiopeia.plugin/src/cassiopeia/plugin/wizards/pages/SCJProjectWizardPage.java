@@ -41,6 +41,10 @@ public class SCJProjectWizardPage extends WizardNewProjectCreationPage {
 	private Button btnRadioLevel1;
 	private Button btnRadioLevel2;
 	private Button btnSafletGen;
+	private Button btnBrowseSourceFolder;
+	private Button btnBrowseJar;
+	private Button btnJOPSCJ;
+	
 	
 	/* SWT label widget */
 	private Text txtSafeletName;
@@ -54,6 +58,7 @@ public class SCJProjectWizardPage extends WizardNewProjectCreationPage {
 
 	@Override
 	public void createControl(Composite parent) {
+		//parent.setLayout(new GridLayout());
 		super.createControl(parent);
 		Composite composite = (Composite)getControl();
 	
@@ -149,18 +154,16 @@ public class SCJProjectWizardPage extends WizardNewProjectCreationPage {
 		
 		Composite rightComposite = new Composite(grpSCJParams, SWT.NULL);
 		rightComposite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-		rightComposite.setLayout(new GridLayout(2, false));
+		rightComposite.setLayout(new GridLayout(1, false));
 				
 		Label lblDescription = new Label(rightComposite, SWT.NULL);
 		lblDescription.setText("Select SCJ source(s):");
 		gridData = new GridData();
-		gridData.horizontalSpan = 2;
 		lblDescription.setLayoutData(gridData);
 		
-		Button btnBrowseSourceFolder = new Button(rightComposite, SWT.NULL);
+		btnBrowseSourceFolder = new Button(rightComposite, SWT.NULL);
 		btnBrowseSourceFolder.setText("Link source folder");
 		gridData = new GridData();
-		gridData.horizontalSpan = 2;
 		btnBrowseSourceFolder.setLayoutData(gridData);
 		btnBrowseSourceFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -169,14 +172,25 @@ public class SCJProjectWizardPage extends WizardNewProjectCreationPage {
 			}
 		});
 
-		Button btnBrowseJar = new Button(rightComposite, SWT.NULL);
+		btnBrowseJar = new Button(rightComposite, SWT.NULL);
 		btnBrowseJar.setText("Add external JAR");
 		gridData = new GridData();
-		gridData.horizontalSpan = 2;
 		btnBrowseJar.setLayoutData(gridData);
 		btnBrowseJar.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleBrowseJAR();
+				validatePage();
+			}
+		});
+		
+		btnJOPSCJ = new Button(rightComposite, SWT.CHECK);
+		btnJOPSCJ.setText("use bundled (JOP -> SCJ)");
+		gridData = new GridData();
+		btnJOPSCJ.setLayoutData(gridData);
+		btnJOPSCJ.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				toggleUseBundledCheckBoxSelection();
 				validatePage();
 			}
 		});
@@ -226,6 +240,16 @@ public class SCJProjectWizardPage extends WizardNewProjectCreationPage {
 		}
 	}
 	
+	private void toggleUseBundledCheckBoxSelection() {
+		if(btnJOPSCJ.getSelection()) {
+			btnBrowseSourceFolder.setEnabled(false);
+			btnBrowseJar.setEnabled(false);
+		} else {
+			btnBrowseSourceFolder.setEnabled(true);
+			btnBrowseJar.setEnabled(true);
+		}
+	}
+	
 	@Override
 	protected boolean validatePage() {
 		boolean valid = super.validatePage();
@@ -233,11 +257,13 @@ public class SCJProjectWizardPage extends WizardNewProjectCreationPage {
 			return false;
 		}
 		
-		if(!validateSafeletFileName())
-			return false;
-		if(!validateSources())
-			return false;
-			
+		if(!getUseBundled()) {
+			if(!validateSafeletFileName())
+				return false;
+			if(!validateSources())
+				return false;
+		}
+		
 		setErrorMessage(null);
         setMessage(null);
         setPageComplete(true);
@@ -315,5 +341,9 @@ public class SCJProjectWizardPage extends WizardNewProjectCreationPage {
 			return safeletData;
 		}
 		return null;
+	}
+	
+	public boolean getUseBundled() {
+		return btnJOPSCJ.getSelection();
 	}
 }

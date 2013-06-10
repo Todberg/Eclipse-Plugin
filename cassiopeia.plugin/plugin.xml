@@ -64,5 +64,18 @@
          </run>
       </runtime>
    </extension>
+   <extension point="org.eclipse.ui.decorators">
+      <decorator
+			id="cassiopeia.plugin.decoratorResources"
+            label="Resource Decorators"
+            state="false"
+            class="cassiopeia.plugin.decorators.ResourceDecorator"
+            objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true">
+          	<description>
+             	Decorator of resources
+          	</description>
+      </decorator>
+   </extension>
 
 </plugin>

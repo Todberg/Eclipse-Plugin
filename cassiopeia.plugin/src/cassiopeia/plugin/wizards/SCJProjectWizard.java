@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -53,9 +54,11 @@ public class SCJProjectWizard extends Wizard implements INewWizard, IExecutableE
 	@Override
 	public boolean performFinish() {	
 		final IProject project = page.getProjectHandle();
+		
 		final LibraryCategory libraryCategory = page.getLibraryCategory();
 		final List<SourceFolder> folders = page.getSourceFolders();
 		final SafeletData safeletData = page.getSafeletData();
+		final boolean useBundled = page.getUseBundled();
 		
 		URI projectLocation = (!page.useDefaults() ? page.getLocationURI() : null);
 		
@@ -65,8 +68,8 @@ public class SCJProjectWizard extends Wizard implements INewWizard, IExecutableE
 		
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
             protected void execute(IProgressMonitor monitor) throws CoreException {
-            	SCJProjectSupport support = new SCJProjectSupport(getShell(), project, description, monitor);
-                support.createJavaProject(safeletData, folders);
+            	 SCJProjectSupport support = new SCJProjectSupport(getShell(), project, description, monitor);
+                 support.createJavaProject(safeletData, folders, useBundled);
             }
         };
         try {
@@ -80,7 +83,7 @@ public class SCJProjectWizard extends Wizard implements INewWizard, IExecutableE
         }
         
         BasicNewProjectResourceWizard.updatePerspective(config);
-        BasicNewProjectResourceWizard.selectAndReveal(project, workbench.getActiveWorkbenchWindow());
+        BasicNewProjectResourceWizard.selectAndReveal(SCJProjectSupport.safeletResource, workbench.getActiveWorkbenchWindow());
 
         return true;
 	}

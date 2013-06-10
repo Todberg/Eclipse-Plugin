@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -24,7 +25,10 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -39,6 +43,8 @@ public class SCJProjectSupport {
 	
 	private Shell shell;
 	
+	public static IResource safeletResource;
+	
 	private IProject project;
 	private IProjectDescription description;
 	private IProgressMonitor monitor;
@@ -47,7 +53,7 @@ public class SCJProjectSupport {
 	
 	private IPath projectPath;
 	private IPath srcFolderPath;
-	
+
 	public SCJProjectSupport(Shell shell, IProject project, IProjectDescription description, IProgressMonitor monitor) {
 		this.shell = shell;
 		this.project = project;
@@ -56,7 +62,7 @@ public class SCJProjectSupport {
 		classpath = new ArrayList<IClasspathEntry>();
 	}
 	
-	public void createJavaProject(SafeletData safeletData, List<SourceFolder> folders) throws CoreException {
+	public void createJavaProject(SafeletData safeletData, List<SourceFolder> folders, boolean useBundled) throws CoreException {
 		try {
 			monitor.beginTask("", 2000);
 			
@@ -65,7 +71,16 @@ public class SCJProjectSupport {
 			
 			projectPath = project.getFullPath();
 			
-			createLinkedSourceFolders(folders);
+			if(useBundled) {
+				createLibrariesFolder();
+				//Bundle bundle = Platform.getBundle( "cassiopeia.plugin" );
+				//InputStream stream = FileLocator.openStream( bundle, "path.in.plugin", false );
+				//classpath.add(JavaCore.newLibraryEntry(path, null, null));
+			}
+			else {
+				createLinkedSourceFolders(folders);
+			}
+			
 			createSrcFolder();
 			createBinFolder();
 			
@@ -79,9 +94,11 @@ public class SCJProjectSupport {
 				cp[i] = classpath.get(i);
 			}
 			javaProject.setRawClasspath(cp, monitor);
-			
-			createSafelet(safeletData);
-			
+
+			if(safeletData != null) {
+				safeletResource = createSafelet(safeletData);
+			}
+				
 		}catch(Exception e){
 			IStatus status = new Status(IStatus.ERROR, "SCJ Project Wizard", IStatus.OK, e.getLocalizedMessage(), null);
             throw new CoreException(status);
@@ -103,6 +120,12 @@ public class SCJProjectSupport {
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void createLibrariesFolder() throws CoreException {
+		IFolder iFolder = project.getFolder("Libraries");
+		iFolder.create(true, true, monitor);
+		
 	}
 	
 	private void createLinkedSourceFolders(List<SourceFolder> folders) throws CoreException {
@@ -129,36 +152,37 @@ public class SCJProjectSupport {
 		binFolder.setDerived(true, monitor);
 	}
 	
-	private void createSafelet(SafeletData safeletData) {
-		if(safeletData != null) {
-			String containerName = project.getName() + "/src/";
-			String fileName = safeletData.name + ".java";
-			
-			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			IResource resource = root.findMember(new Path(containerName));
-			IContainer container = (IContainer) resource;
-			final IFile file = container.getFile(new Path(fileName));
-			try {
-				InputStream stream = openContentStream(safeletData);
-				file.create(stream, true, monitor);
-				stream.close();
-			} catch (IOException e1) { } 
-			catch(CoreException e2) { }
-			
-			monitor.worked(1);
-			monitor.setTaskName("Opening file for editing...");
-			shell.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					IWorkbenchPage page =
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-					try {
-						IDE.openEditor(page, file, true);
-					} catch (PartInitException e) {
-					}
+	private IResource createSafelet(SafeletData safeletData) {
+		String containerName = project.getName() + "/src/";
+		String fileName = safeletData.name + ".java";
+
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IResource srcFolderResource = root.findMember(new Path(containerName));
+		IContainer container = (IContainer) srcFolderResource;	
+		final IFile file = container.getFile(new Path(fileName));
+	
+		try {
+			InputStream stream = openContentStream(safeletData);
+			file.create(stream, true, monitor);
+			stream.close();
+		} catch (IOException e1) { } 
+		catch(CoreException e2) { }
+		
+		monitor.worked(1);
+		monitor.setTaskName("Opening file for editing...");
+		shell.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				IWorkbenchPage page =
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+				try {
+					IDE.openEditor(page, file, true);
+				} catch (PartInitException e) {
 				}
-			});
-			monitor.worked(1);
-		}
+			}
+		});
+		monitor.worked(1);
+		
+		return root.findMember(new Path(containerName + fileName));
 	}
 
 	private InputStream openContentStream(SafeletData safeletData) {
