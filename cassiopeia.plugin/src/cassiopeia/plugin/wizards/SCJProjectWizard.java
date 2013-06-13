@@ -83,7 +83,12 @@ public class SCJProjectWizard extends Wizard implements INewWizard, IExecutableE
         }
         
         BasicNewProjectResourceWizard.updatePerspective(config);
-        BasicNewProjectResourceWizard.selectAndReveal(SCJProjectSupport.safeletResource, workbench.getActiveWorkbenchWindow());
+        if(SCJProjectSupport.safeletResource != null) {
+        	BasicNewProjectResourceWizard.selectAndReveal(SCJProjectSupport.safeletResource, workbench.getActiveWorkbenchWindow());
+        	SCJProjectSupport.safeletResource = null;
+        }
+        else
+        	BasicNewProjectResourceWizard.selectAndReveal(project, workbench.getActiveWorkbenchWindow());
 
         return true;
 	}

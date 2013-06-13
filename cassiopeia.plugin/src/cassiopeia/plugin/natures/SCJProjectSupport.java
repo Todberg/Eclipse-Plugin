@@ -15,11 +15,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -33,6 +35,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.osgi.framework.Bundle;
 
 import cassiopeia.plugin.misc.SafeletData;
 import cassiopeia.plugin.wizards.pages.tree.Model.SourceFolder;
@@ -73,9 +76,12 @@ public class SCJProjectSupport {
 			
 			if(useBundled) {
 				createLibrariesFolder();
-				//Bundle bundle = Platform.getBundle( "cassiopeia.plugin" );
-				//InputStream stream = FileLocator.openStream( bundle, "path.in.plugin", false );
-				//classpath.add(JavaCore.newLibraryEntry(path, null, null));
+				Bundle bundle = Platform.getBundle( "cassiopeia.plugin" );
+				InputStream stream = FileLocator.openStream(bundle, new Path("libs/scj/JOPSCJ.jar"), false);
+				IPath path = new Path("libs/JOPSCJ.jar");
+				IFile file = project.getFile(path);
+				file.create( stream, true, null );
+				classpath.add(JavaCore.newLibraryEntry(projectPath.append(path), null, null));
 			}
 			else {
 				createLinkedSourceFolders(folders);
@@ -123,9 +129,8 @@ public class SCJProjectSupport {
 	}
 	
 	private void createLibrariesFolder() throws CoreException {
-		IFolder iFolder = project.getFolder("Libraries");
+		IFolder iFolder = project.getFolder("libs");
 		iFolder.create(true, true, monitor);
-		
 	}
 	
 	private void createLinkedSourceFolders(List<SourceFolder> folders) throws CoreException {
